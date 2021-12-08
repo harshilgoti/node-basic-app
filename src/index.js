@@ -23,6 +23,7 @@ app.post("/users", (req, res) => {
 app.get("/users", (req, res) => {
   User.find({})
     .then((users) => {
+      console.log(users);
       res.send(users);
     })
     .catch((e) => {});
