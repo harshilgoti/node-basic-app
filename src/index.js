@@ -90,6 +90,17 @@ app.patch("/users/:id", async (req, res) => {
   }
 });
 
+app.delete("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+
+    if (!user) return res.status(404).send();
+    return res.status(200).send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 app.post("/tasks", async (req, res) => {
   try {
     const task = await new Task(req.body);
@@ -166,6 +177,17 @@ app.patch("/tasks/:id", async (req, res) => {
       return res.status(404).send();
     }
     return res.status(200).send(task);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+app.delete("/tasks/:id", async (req, res) => {
+  try {
+    const user = await Task.findByIdAndDelete(req.params.id);
+
+    if (!user) return res.status(404).send();
+    return res.status(200).send(user);
   } catch (e) {
     res.status(400).send(e);
   }
