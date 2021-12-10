@@ -66,6 +66,30 @@ app.get("/user/:id", async (req, res) => {
   //   });
 });
 
+app.patch("/users/:id", async (req, res) => {
+  const updates = Object.keys(req.body);
+  const valiUpdates = ["name", "age", "email", "password"];
+  const isValidUpdates = updates.every((update) =>
+    valiUpdates.includes(update)
+  );
+
+  if (!isValidUpdates)
+    return res.status(404).send({ error: "In-valid updates!" });
+
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+      runValidators: true,
+    });
+    if (!user) {
+      return res.status(404).send();
+    }
+    return res.status(200).send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 app.post("/tasks", async (req, res) => {
   try {
     const task = await new Task(req.body);
