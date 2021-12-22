@@ -6,7 +6,7 @@ const router = new express.Router();
 router.post("/users", async (req, res) => {
   try {
     const user = await new User(req.body);
-    user.save();
+    await user.save();
     res.status(200).send(user);
   } catch (e) {
     res.status(400).send(e);
@@ -72,10 +72,18 @@ router.patch("/users/:id", async (req, res) => {
     return res.status(404).send({ error: "In-valid updates!" });
 
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
+    //for middaleware
+    const user = await User.findById(req.params.id);
+    updates.forEach((update) => (user[update] = req.body[update]));
+    await user.save();
+
+    // const user = await User.findByIdAndUpdate(req.params.id, req.body, {
+    //   new: true,
+    //   runValidators: true,
+    // });
+
+    console.log("45454", user);
+
     if (!user) {
       return res.status(404).send();
     }
