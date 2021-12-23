@@ -11,16 +11,21 @@ app.use(userRouter);
 app.use(taskRouter);
 
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 
 const myPassword = async () => {
   const password = "Red1234!";
   const hashPassword = await bcrypt.hash(password, 8);
-
-  console.log(password);
-  console.log(hashPassword);
-
+  // console.log(password);
+  // console.log(hashPassword);
   const isMatch = await bcrypt.compare("red1234!", hashPassword);
-  console.log(isMatch);
+  // console.log(isMatch);
+  const token = jwt.sign({ _id: "abc123" }, "mynameisharshil", {
+    expiresIn: "7 days",
+  });
+  console.log(token);
+  const data = jwt.verify(token, "mynameisharshil");
+  console.log(data);
 };
 
 myPassword();

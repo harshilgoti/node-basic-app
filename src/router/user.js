@@ -28,6 +28,7 @@ router.post("/user/login", async (req, res) => {
       req.body.email,
       req.body.password
     );
+
     res.status(200).send(user);
   } catch (e) {
     res.status(400).send(e);
