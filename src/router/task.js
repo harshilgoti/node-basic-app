@@ -11,14 +11,6 @@ router.post("/tasks", async (req, res) => {
   } catch (e) {
     res.send();
   }
-  // task
-  //   .save()
-  //   .then(() => {
-  //     res.send(task);
-  //   })
-  //   .catch((er) => {
-  //     res.status(400).send(er);
-  //   });
 });
 
 router.get("/tasks", async (req, res) => {
@@ -28,11 +20,6 @@ router.get("/tasks", async (req, res) => {
   } catch (e) {
     res.send();
   }
-  // Task.find({})
-  //   .then((taks) => {
-  //     res.send(taks);
-  //   })
-  //   .catch((e) => {});
 });
 
 router.get("/task/:id", async (req, res) => {
@@ -47,17 +34,6 @@ router.get("/task/:id", async (req, res) => {
   } catch (e) {
     res.status(400).send();
   }
-
-  // Task.findById({ _id })
-  //   .then((task) => {
-  //     if (!task) {
-  //       return res.status(400).send();
-  //     }
-  //     res.send(task);
-  //   })
-  //   .catch((e) => {
-  //     res.status(400).send();
-  //   });
 });
 
 router.patch("/tasks/:id", async (req, res) => {
