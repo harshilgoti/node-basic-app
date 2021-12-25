@@ -6,6 +6,18 @@ const taskRouter = require("./router/task");
 const app = express();
 const port = process.env.PORT || 3000;
 
+// app.use((req, res, next) => {
+//   if (req.method === "GET") {
+//     res.send("Get requests are desabled");
+//   } else {
+//     next();
+//   }
+// });
+
+// app.use((req, res, next) => {
+//   res.status(503).send("Side is down please try back soon!");
+// });
+
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
@@ -23,9 +35,9 @@ const myPassword = async () => {
   const token = jwt.sign({ _id: "abc123" }, "mynameisharshil", {
     expiresIn: "7 days",
   });
-  console.log(token);
+  // console.log(token);
   const data = jwt.verify(token, "mynameisharshil");
-  console.log(data);
+  // console.log(data);
 };
 
 myPassword();

@@ -7,7 +7,8 @@ router.post("/users", async (req, res) => {
   try {
     const user = await new User(req.body);
     await user.save();
-    res.status(200).send(user);
+    const token = await user.generateAuthToken();
+    res.status(200).send({ user, token });
   } catch (e) {
     res.status(400).send(e);
   }
@@ -28,8 +29,9 @@ router.post("/user/login", async (req, res) => {
       req.body.email,
       req.body.password
     );
+    const token = await user.generateAuthToken();
 
-    res.status(200).send(user);
+    res.status(200).send({ user, token });
   } catch (e) {
     res.status(400).send(e);
   }
@@ -94,8 +96,6 @@ router.patch("/users/:id", async (req, res) => {
     //   new: true,
     //   runValidators: true,
     // });
-
-    console.log("45454", user);
 
     if (!user) {
       return res.status(404).send();
