@@ -1,5 +1,6 @@
 const express = require("express");
 const User = require("../models/users");
+const auth = require("../middleware/auth");
 
 const router = new express.Router();
 
@@ -37,19 +38,17 @@ router.post("/user/login", async (req, res) => {
   }
 });
 
-router.get("/users", async (req, res) => {
+router.get("/users", auth, async (req, res) => {
   try {
     const users = await User.find({});
     res.send(users);
   } catch (e) {
     res.send();
   }
-  // User.find({})
-  //   .then((users) => {
-  //     console.log(users);
-  //     res.send(users);
-  //   })
-  //   .catch((e) => {});
+});
+
+router.get("/user/me", auth, async (req, res) => {
+  res.send(req.user);
 });
 
 router.get("/user/:id", async (req, res) => {
@@ -57,6 +56,7 @@ router.get("/user/:id", async (req, res) => {
 
   try {
     const user = await User.findById(_id);
+
     if (!user) {
       return res.status(400).send();
     }
