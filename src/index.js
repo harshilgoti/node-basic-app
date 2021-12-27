@@ -45,3 +45,18 @@ myPassword();
 app.listen(port, () => {
   console.log("Server is up on port " + port);
 });
+
+const Task = require("./models/tasks");
+const User = require("./models/users");
+
+const main = async (req, res) => {
+  // const task = await Task.findById("61c9e372afd4bc06eefda1d1");
+  // await task.populate("owner");
+  // console.log(task.owner);
+
+  const user = await User.findById("61c9e352afd4bc06eefda1c0");
+  await user.populate("tasks");
+  // console.log(user.tasks);
+};
+
+main();
