@@ -13,15 +13,6 @@ router.post("/users", async (req, res) => {
   } catch (e) {
     res.status(400).send(e);
   }
-  // const user = new User(req.body);
-  // user
-  //   .save()
-  //   .then(() => {
-  //     res.send(user);
-  //   })
-  //   .catch((er) => {
-  //     res.status(400).send(er);
-  //   });
 });
 
 router.post("/user/login", async (req, res) => {
@@ -47,6 +38,29 @@ router.get("/users", auth, async (req, res) => {
   }
 });
 
+router.post("/user/logout", auth, async (req, res) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+
+    await req.user.save();
+    res.status(200).send();
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
+router.post("/user/logoutAll", auth, async (req, res) => {
+  try {
+    req.user.tokens = [];
+    await req.user.save();
+    res.send();
+  } catch (e) {
+    res.status(500).send();
+  }
+});
+
 router.get("/user/me", auth, async (req, res) => {
   res.send(req.user);
 });
@@ -64,16 +78,6 @@ router.get("/user/:id", async (req, res) => {
   } catch (e) {
     res.send();
   }
-  // User.findById({ _id })
-  //   .then((user) => {
-  //     if (!user) {
-  //       return res.status(400).send();
-  //     }
-  //     res.send(user);
-  //   })
-  //   .catch((e) => {
-  //     res.status(400).send();
-  //   });
 });
 
 router.patch("/users/:id", async (req, res) => {
@@ -106,12 +110,44 @@ router.patch("/users/:id", async (req, res) => {
   }
 });
 
+router.patch("/user/me", auth, async (req, res) => {
+  const updates = Object.keys(req.body);
+  const valiUpdates = ["name", "age", "email", "password"];
+  const isValidUpdates = updates.every((update) =>
+    valiUpdates.includes(update)
+  );
+
+  if (!isValidUpdates)
+    return res.status(404).send({ error: "In-valid updates!" });
+
+  try {
+    const user = req.user;
+    updates.forEach((update) => (user[update] = req.body[update]));
+    await user.save();
+
+    return res.status(200).send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
 router.delete("/users/:id", async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
 
     if (!user) return res.status(404).send();
     return res.status(200).send(user);
+  } catch (e) {
+    res.status(400).send(e);
+  }
+});
+
+router.delete("/user/me", auth, async (req, res) => {
+  try {
+    await req.user.remove();
+    if (!req.user) return res.status(404).send();
+
+    return res.status(200).send(req.user);
   } catch (e) {
     res.status(400).send(e);
   }
