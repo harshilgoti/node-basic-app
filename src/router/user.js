@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const sharp = require("sharp");
 const User = require("../models/users");
 const auth = require("../middleware/auth");
 
@@ -155,13 +156,13 @@ router.delete("/user/me", auth, async (req, res) => {
 });
 
 const upload = multer({
-  dest: "avatars",
   limits: {
     fileSize: 1000000,
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(doc|docx)$/)) {
-      return cb(new Error("Please upload a document file"));
+    if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+      return cb(new Error("Please upload an image file"));
+
     }
     cb(undefined, true);
   },
@@ -169,13 +170,42 @@ const upload = multer({
 
 router.post(
   "/users/me/avatar",
+  auth,
   upload.single("avatar"),
-  (req, res) => {
+  async (req, res) => {
+    const buffer = await sharp(req.file.buffer)
+      .resize({ width: 250, height: 250 })
+      .png()
+      .toBuffer();
+    req.user.avatar = buffer;
+    await req.user.save();
+
     res.send();
   },
   (error, req, res, next) => {
     res.status(400).send({ error: error.message });
   }
 );
+
+
+router.delete("/users/me/avatar", auth, async (req, res) => {
+  req.user.avatar = undefined;
+  await req.user.save();
+  res.send();
+});
+
+router.get("/users/:id/avatar", async (req, res) => {
+  const user = await User.findById(req.params.id);
+  try {
+    if (!user || !user.avatar) {
+      throw new Error();
+    }
+
+    res.set("Content-Type", "image/png");
+    res.send(user.avatar);
+  } catch (e) {
+    res.status(404).send();
+  }
+});
 
 module.exports = router;
