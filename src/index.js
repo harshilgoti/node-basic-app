@@ -6,18 +6,6 @@ const taskRouter = require("./router/task");
 const app = express();
 const port = process.env.PORT || 3000;
 
-// app.use((req, res, next) => {
-//   if (req.method === "GET") {
-//     res.send("Get requests are desabled");
-//   } else {
-//     next();
-//   }
-// });
-
-// app.use((req, res, next) => {
-//   res.status(503).send("Side is down please try back soon!");
-// });
-
 app.use(express.json());
 app.use(userRouter);
 app.use(taskRouter);
@@ -42,21 +30,15 @@ const myPassword = async () => {
 
 myPassword();
 
+const multer = require("multer");
+const upload = multer({
+  dest: "images",
+});
+
+app.post("/upload", upload.single("upload"), (req, res) => {
+  res.send();
+});
+
 app.listen(port, () => {
   console.log("Server is up on port " + port);
 });
-
-const Task = require("./models/tasks");
-const User = require("./models/users");
-
-const main = async (req, res) => {
-  // const task = await Task.findById("61c9e372afd4bc06eefda1d1");
-  // await task.populate("owner");
-  // console.log(task.owner);
-
-  const user = await User.findById("61cb28b6a2dcf468bc97710c");
-  // await user.populate("tasks");
-  // console.log(user.tasks);
-};
-
-main();
