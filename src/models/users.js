@@ -82,6 +82,7 @@ userSchema.methods.toJSON = function (req, res) {
 
   delete userObject.password;
   delete userObject.tokens;
+  delete userObject.avatar;
 
   return userObject;
 };
