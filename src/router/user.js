@@ -162,6 +162,7 @@ const upload = multer({
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
       return cb(new Error("Please upload an image file"));
+
     }
     cb(undefined, true);
   },
@@ -178,12 +179,14 @@ router.post(
       .toBuffer();
     req.user.avatar = buffer;
     await req.user.save();
+
     res.send();
   },
   (error, req, res, next) => {
     res.status(400).send({ error: error.message });
   }
 );
+
 
 router.delete("/users/me/avatar", auth, async (req, res) => {
   req.user.avatar = undefined;
